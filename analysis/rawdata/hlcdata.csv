@@ -1,0 +1,6 @@
+cubeid;Date;Time;Probe;Probe serial;Probe verification;Operator;Device serial;Direction (Equotip);Material;Conversion Std.;Scale;Upper limit;Lower limit;Readings;Mean;Min;Max;Range;Std. dev.;reading1;reading2;reading3;reading4;reading5;reading6;reading7;reading8;reading9;reading10
+DW-G1-S3;16/11/2022;15:55:29;Equotip Leeb Impact Device C;IC51-004-0185;--;Paixao;UP01-003-1680;Automatic;basalt;Default;HLC;528;498;10;769;743;813;70;23;769;750;750;743;783;813;747;800;755;782
+DW-G3-S3;16/11/2022;15:47:15;Equotip Leeb Impact Device C;IC51-004-0185;--;Paixao;UP01-003-1680;Automatic;scoria;Default;HLC;528;498;10;717;604;834;229;86;644;688;834;824;653;614;701;604;810;797
+DW-G4-S3;16/11/2022;15:52:31;Equotip Leeb Impact Device C;IC51-004-0185;--;Paixao;UP01-003-1680;Automatic;pumaceousignimbrite;Default;HLC;528;498;10;528;456;605;149;45.5;500;600;456;518;511;488;509;605;532;562
+KW-G1-S3;16/11/2022;15:50:56;Equotip Leeb Impact Device C;IC51-004-0185;--;Paixao;UP01-003-1680;Automatic;glassyignimbrite;Default;HLC;528;498;10;907;789;938;149;41.2;907;920;920;888;921;925;925;789;932;938
+MW6-G2-S3;16/11/2022;15:53:53;Equotip Leeb Impact Device C;IC51-004-0185;--;Paixao;UP01-003-1680;Automatic;ignimbrite;Default;HLC;528;498;10;672;591;741;149;44.5;591;609;690;671;654;741;718;707;651;685

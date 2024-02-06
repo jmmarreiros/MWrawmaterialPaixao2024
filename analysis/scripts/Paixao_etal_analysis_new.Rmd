@@ -1,0 +1,291 @@
+---
+title: "Plots Hardness, density and volume loss data"
+author: Eduardo Paixão, Tegenu Gossa, Walter Gneisinger, João Marreiros, Sören Tholen,
+  Ivan Calandra, Erella Hovers
+date: "`r Sys.time()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+  pdf_document:
+    toc: true
+---
+
+---
+
+# Content
+This script reads and plots the data from the 3D volume loss and Leeb Rebound hardness. 3D volume loss was calculated using CloudCompare cloud-to-mesh distance tool. Hardness was measured on each rock using the device Equotip 550 Leeb Impact device C (HLC).
+For details on the methods and data acquisition, please visit the Materials and Methods section of the paper. 
+
+The knit directory for this script is the project directory.
+
+---
+
+# Load packages
+```{r}
+
+library(R.utils)
+library(ggplot2)
+library(tools)
+library(tidyverse)
+library(doBy)
+library(ggrepel)
+library(flextable)
+library(readr)
+library(ggpubr)
+
+```
+
+---
+
+# Import and preview data
+```{r}
+
+# Data on hardness, density and volume loss are imported individually
+
+hlcdata <- read_csv2("../rawdata/hlcdata.csv")
+volumelossdata2 <- read_csv2("../rawdata/volumelossdata.csv")
+densitydata <- read_csv2("../rawdata/densitydata.csv")
+
+str(hlcdata)
+str(volumelossdata2)
+str(densitydata)
+
+```
+
+# Manipulate hardness data
+```{r}
+
+# HLC data, Multiple variables are stored in column names, so transform it into observations per row
+hlcdatalong <- hlcdata %>% 
+  pivot_longer(c(`reading1`, `reading2`,`reading3`, `reading4`, `reading5`, `reading6`, `reading7`, `reading8`, `reading9`, `reading10`), names_to = "hlcvalues", values_to = "Hardness")
+
+write_csv(hlcdatalong, "../deriveddata/hlcdatalong.csv")
+
+```
+
+# Summarise data
+```{r}
+
+# summarise by "Material" but keep other columns
+
+hlcstats <- hlcdatalong %>% group_by(cubeid, Material) %>%
+      summarise(
+      hlccount = n(),
+      hlcmax = max(Hardness, na.rm = TRUE),
+      hlcmin = min (Hardness, na.rm = TRUE),
+      hlcmean = mean(Hardness, na.rm = TRUE),
+      hlcsd = sd(Hardness, na.rm = TRUE),
+      hlcmedian = median(Hardness, na.rm = TRUE),
+  ) 
+
+# summarise by "Sample" but keep other columns
+
+volumelossstats <- volumelossdata2 %>% group_by(cubeid, Sample, Material, Cycle) %>%
+      summarise(
+      vlcount = n(),
+      vlmax = max(Value, na.rm = TRUE),
+      vlmin = min (Value, na.rm = TRUE),
+      vlmean = mean(Value, na.rm = TRUE),
+      vlsd = sd(Value, na.rm = TRUE),
+      vlmedian = median(Value, na.rm = TRUE),
+   )
+
+# see data summary
+hlcstats
+volumelossstats
+
+# save the results 
+write_csv(hlcstats, "../stats/stats_hlc.csv")
+write_csv(volumelossstats, "../stats/stats_volumeloss.csv")
+
+# join data tables
+
+hlcdensity_data <- full_join(hlcstats, densitydata,
+              by = join_by("cubeid", "Material"), keep = F)
+
+full_data <- full_join(hlcdensity_data, volumelossstats,
+              by = join_by("cubeid", "Material"))
+
+# save single dataset
+write_csv(full_data, "../deriveddata/full_data.csv")
+
+
+```
+
+# Plot and explore hardness data, organised by raw material
+```{r}
+
+# Boxplot and distribution of all hardness values (10 per each raw material)
+
+hlcplot <- ggplot(hlcdatalong, aes(Material, Hardness, colour = Material)) +
+  geom_boxplot() +
+  geom_jitter() +
+  guides(color = FALSE)  +
+  scale_x_discrete(labels = c("Basalt", "Glassy Ignimbrite", "Ignimbrite", "Pumaceous Ignimbrite", "Scoria")) +
+  labs(y = "Hardness mean (HLC)", x = "Raw material", colour = "Raw Material")
+
+ggsave("../plots/hlcdata.png")
+
+print(hlcplot)
+
+```
+
+# Plot and explore volume loss data, organised by raw material
+```{r}
+
+# boxplot with absolute values for all samples organysed by raw material
+
+volumeplot <- ggplot(full_data, aes(Material, vlmax, colour = Material)) +
+  geom_boxplot() +
+  geom_jitter() +
+  guides(color = FALSE)  +
+  scale_x_discrete(labels = c("Basalt", "Glassy Ignimbrite", "Ignimbrite", "Pumaceous Ignimbrite", "Scoria")) +
+  labs(y = "Damage (absolute Hausdorff distance, aHd)", x = "Raw material", colour = "Raw Material")
+
+print(volumeplot)
+
+ggsave("../plots/damage_rawmaterial.png")
+
+
+```
+
+# Relationship betwen hardness, density, and volume loss
+
+```{r}
+
+# scatterplot to show relationship between variables (dependent, volume loss; and independent, density and hardness)
+
+scat <- ggplot(full_data, aes(hlcmean, vlmax, color = Material)) + 
+  geom_point() +
+  scale_color_discrete(labels = c("Basalt", "Glassy Ignimbrite", "Ignimbrite", "Pumaceous Ignimbrite", "Scoria")) +
+  labs(y = "Damage (absolute Hausdorff distance, aHd)", x = "Hardness mean (HLC)", colour = "Raw Material")
+
+ggsave("../plots/hardvolume.png")
+
+print(scat)
+
+scat2 <- ggplot(full_data,aes(density, vlmax, color = Material)) + 
+  geom_point() +
+  scale_color_discrete(labels = c("Basalt", "Glassy Ignimbrite", "Ignimbrite", "Pumaceous Ignimbrite", "Scoria")) +
+  labs(y = "Damage (absolute Hausdorff distance), aHd", x = "Density", colour = "Raw Material")
+
+ggsave("../plots/densityvolume.png")
+
+print(scat2)
+
+scat3 <- ggplot(full_data,aes(density, hlcmean, color = Material)) + 
+  geom_point()+
+  scale_color_discrete(labels = c("Basalt", "Glassy Ignimbrite", "Ignimbrite", "Pumaceous Ignimbrite", "Scoria")) +
+  labs(y = "Hardness mean (HLC)", x = "Density", colour = "Raw Material")
+
+ggsave("../plots/densityhard.png")
+
+print(scat3)
+
+# combine all data plots and single legend
+
+arranged2 <- ggarrange(scat3, scat, scat2, common.legend = TRUE, ncol = 3, nrow = 1)
+
+print(arranged2)
+
+ggsave("../plots/arranged2.png")
+
+```
+
+# Bootstrapping
+
+## Bootstrapped Kruskal–Wallis H (p-value, 95% confidence interval) for volume loss (damage) by raw material (more than 3 groups).
+
+```{r, echo=FALSE}
+
+# because in this study, sample size is small (4 samples per raw material), here we try the Kruskal–Wallis H test (bootstrapped over 1000 iterations) and the resulting 95% confidence interval of the p-value to assess two-sample differences (following the similar approach by Lin et al. 2023. JPA, but here adjusted for more than 2 predictor variable groups).
+
+# Kruskal-Wallis rank sum test checks if the null hypothesis, that the observations on volume loss are the same in each Raw material. The alternative hypothesis is that at least they differ in one raw material.
+
+p_boot <- vector()
+
+for (i in 1:1000) {
+  
+  set.seed(i)
+
+  basalt <- full_data[full_data$Material == 'basalt',]
+  scoria <- full_data[full_data$Material == 'scoria',]
+  ignimbrite <- full_data[full_data$Material == 'ignimbrite',] 
+  glassyignimbrite <- full_data[full_data$Material == 'glassyignimbrite',]
+  pumaceousignimbrite <- full_data[full_data$Material == 'pumaceousignimbrite',]
+ 
+  basalt_sample <- basalt[sample(1:nrow(basalt), nrow(basalt), replace=TRUE),]
+  scoria_sample <- scoria[sample(1:nrow(scoria), nrow(scoria), replace=TRUE),]  
+  ignimbrite_sample <- ignimbrite[sample(1:nrow(ignimbrite), nrow(ignimbrite), replace=TRUE),]
+  glassyignimbrite_sample <- glassyignimbrite[sample(1:nrow(glassyignimbrite), nrow(glassyignimbrite), replace=TRUE),]   
+  pumaceousignimbrite_sample <- pumaceousignimbrite[sample(1:nrow(pumaceousignimbrite), nrow(pumaceousignimbrite), replace=TRUE),]
+  
+  combined <- rbind(basalt_sample, scoria_sample, pumaceousignimbrite_sample, glassyignimbrite_sample, ignimbrite_sample)
+  
+  test_res <- kruskal.test(vlmax ~ Material, data = combined)
+
+  p_boot[i] <- round(test_res$p.value, 4)
+  
+} 
+
+return(quantile(p_boot, c(0.025, 0.975)))
+
+# p-value <0.05, showing that the null hypothesis can be reject.
+# We check where are those differences to calculate pairwise comparisons between raw materials levels with corrections for multiple testing.
+
+pairwise.wilcox.test(full_data$vlmax, full_data$Material,
+                 p.adjust.method = "BH")
+
+# The pairwise comparison shows that only glassy ignimbrite are not significantly different (p-value > 0.05), and that pumaceous ignimbrite and scoria are significantly different from each other, and from all other raw materials (p-value < 0.05). 
+
+```
+
+# Kendall rank correlation between variables
+```{r, echo=FALSE,}
+
+# Kendall’s Tau correlation test, refers to the strength and direction of a relationship between two variables. The value of a correlation coefficient ranges from -1 to 1. "-1" indicate a negative relationship; "0" indicate no relationship between variables; and "1" indicate a perfect positive relationship.
+
+## Correlation between Hardness and volume loss
+cor.test(full_data$hlcmean, full_data$vlmax,  method='kendall')
+
+## Correlation between Density and volume loss
+cor.test(full_data$density, full_data$vlmax,  method='kendall')
+
+# both Hardness (tau = -0.85) and density (-0.71) seems to indicate a negative relationship, meaning that high hardness and density values related to low values of volume loss.
+
+```
+
+# Export manuscript tables
+```{r}
+
+# select and format datasets to be included in the paper
+
+## density and hardness data organised by Material ((change column names))
+colnames(hlcdensity_data) <- c("Cube ID", "Raw Material", "Hardness (counts)", "Hardness (min)", "Hardness (max)", "Hardness (mean)", "Hardness (median)", "Hardness (sd)", "Mass (gr)", "Volume (cm3)", "Density")
+
+print(hlcdensity_data)
+
+write_csv(hlcdensity_data, "../deriveddata/hlcdensity_data.csv")
+
+## Volume loss data organised by Sample (change column names)
+colnames(volumelossstats) <- c("Cube ID", "Sample", "Raw material", "Cycle", "Volume loss (counts)", "Volume loss (max)", "Volume loss (min", "Volume loss (mean)", "Volume loss (sd)", "Volume loss (median)")
+
+print(volumelossstats)
+
+write_csv(volumelossstats, "../deriveddata/volumeloss_stats.csv")
+
+```
+
+---
+
+# sessionInfo() and RStudio version
+
+```{r}
+sessionInfo()
+
+```
+
+---
+
+END OF SCRIPT
