@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
   fig.path = "README-"
 )
 # Please put your title here to include it in the file below.
-Title <- "Exploring Technological Decision-Making Processes in the Early Acheulian at Melka Wakena, Ethiopia: A Controlled Experimental Approach to Raw Material Selection"
+Title <- "Exploring Early Acheulian Technological Decision-making:  A Controlled Experimental Approach to Raw Material Selection for Percussive Artifacts in Melka Wakena, Ethiopia"
 ```
 
 # MWrawmaterialPaixao2024
@@ -20,12 +20,7 @@ Title <- "Exploring Technological Decision-Making Processes in the Early Acheuli
 
 This repository contains the data and code for our paper:
 
-> Eduardo Paixão, Tegenu Gossa, Walter Gneisinger, João Marreiros, Soren Tholen, Ivan Calandra, Erella Hovers, (2024). _`r Title`_. Name of journal/book <https://doi.org/xxx/xxx>
-
-Our pre-print is online here:
-
-> Authors, (YYYY). _`r Title`_. Name of journal/book, Accessed `r format(Sys.Date(), "%d %b %Y")`. Online at <https://doi.org/xxx/xxx>
-
+> Eduardo Paixão, Tegenu Gossa, Walter Gneisinger, João Marreiros, Soren Tholen, Ivan Calandra, Erella Hovers, (2024). _`r Title`_. PLOS ONE <https://doi.org/xxx/xxx>
 
 ### How to cite
 
@@ -55,7 +50,6 @@ You can download the compendium as a zip from from this URL:
 - open the `.Rproj` file in RStudio
 - run `devtools::install()` to ensure you have the packages this analysis depends on (also listed in the
 [DESCRIPTION](/DESCRIPTION) file).
-- finally, open `analysis/paper/paper.Rmd` and knit to produce the `paper.docx`, or run `rmarkdown::render("analysis/paper/paper.qmd")` in the R console
 
 ### Licenses
 

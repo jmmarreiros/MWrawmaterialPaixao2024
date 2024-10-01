@@ -8,18 +8,10 @@
 This repository contains the data and code for our paper:
 
 > Eduardo Paixão, Tegenu Gossa, Walter Gneisinger, João Marreiros, Soren
-> Tholen, Ivan Calandra, Erella Hovers, (2024). *Exploring Technological
-> Decision-Making Processes in the Early Acheulian at Melka Wakena,
-> Ethiopia: A Controlled Experimental Approach to Raw Material
-> Selection*. Name of journal/book <https://doi.org/xxx/xxx>
-
-Our pre-print is online here:
-
-> Authors, (YYYY). *Exploring Technological Decision-Making Processes in
-> the Early Acheulian at Melka Wakena, Ethiopia: A Controlled
-> Experimental Approach to Raw Material Selection*. Name of
-> journal/book, Accessed 06 Feb 2024. Online at
-> <https://doi.org/xxx/xxx>
+> Tholen, Ivan Calandra, Erella Hovers, (2024). *Exploring Early
+> Acheulian Technological Decision-making: A Controlled Experimental
+> Approach to Raw Material Selection for Percussive Artifacts in Melka
+> Wakena, Ethiopia*. PLOS ONE <https://doi.org/xxx/xxx>
 
 ### How to cite
 
@@ -27,10 +19,10 @@ Please cite this compendium as:
 
 > Eduardo Paixão, Tegenu Gossa, Walter Gneisinger, João Marreiros, Soren
 > Tholen, Ivan Calandra, Erella Hovers, (2024). *Compendium of R code
-> and data for Exploring Technological Decision-Making Processes in the
-> Early Acheulian at Melka Wakena, Ethiopia: A Controlled Experimental
-> Approach to Raw Material Selection*. Accessed 06 Feb 2024. Online at
-> <https://doi.org/xxx/xxx>
+> and data for Exploring Early Acheulian Technological Decision-making:
+> A Controlled Experimental Approach to Raw Material Selection for
+> Percussive Artifacts in Melka Wakena, Ethiopia*. Accessed 01 Oct 2024.
+> Online at <https://doi.org/xxx/xxx>
 
 ## Contents
 
@@ -58,9 +50,7 @@ You can download the compendium as a zip from from this URL:
 [master.zip](/archive/master.zip). After unzipping: - open the `.Rproj`
 file in RStudio - run `devtools::install()` to ensure you have the
 packages this analysis depends on (also listed in the
-[DESCRIPTION](/DESCRIPTION) file). - finally, open
-`analysis/paper/paper.Rmd` and knit to produce the `paper.docx`, or run
-`rmarkdown::render("analysis/paper/paper.qmd")` in the R console
+[DESCRIPTION](/DESCRIPTION) file).
 
 ### Licenses
 
